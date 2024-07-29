@@ -23,4 +23,23 @@ public class Account {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "account")
     private List<Reimbursement> reimbursementList;
+
+    public Account(Integer accountId, String firstName, String lastName, String username, Role role, List<Reimbursement> reimbursementList) {
+        this.accountId = accountId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.role = role;
+        this.reimbursementList = reimbursementList;
+    }
+
+    public Account(Role role, String username, String lastName, String firstName) {
+        this.role = role;
+        this.username = username;
+        this.lastName = lastName;
+        this.firstName = firstName;
+    }
+
+    public Account() {
+    }
 }

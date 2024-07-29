@@ -17,4 +17,17 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @Column(unique = true)
     private RoleType roleType;
+
+    public Role(Integer roleId, List<Account> accountList, RoleType roleType) {
+        this.roleId = roleId;
+        this.accountList = accountList;
+        this.roleType = roleType;
+    }
+
+    public Role(RoleType roleType) {
+        this.roleType = roleType;
+    }
+
+    public Role() {
+    }
 }
