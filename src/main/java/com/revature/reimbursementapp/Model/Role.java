@@ -1,5 +1,6 @@
 package com.revature.reimbursementapp.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.revature.reimbursementapp.Enum.RoleType;
 import jakarta.persistence.*;
 
@@ -12,6 +13,7 @@ public class Role {
     private Integer roleId;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "role")
+    @JsonIgnore
     private List<Account> accountList;
 
     @Enumerated(EnumType.STRING)

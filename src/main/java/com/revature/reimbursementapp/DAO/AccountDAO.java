@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface AccountDAO extends JpaRepository<Account, Integer> {
     List<Account> findAllByRole(Role role);
+    Account findByUsername(String username);
 }
