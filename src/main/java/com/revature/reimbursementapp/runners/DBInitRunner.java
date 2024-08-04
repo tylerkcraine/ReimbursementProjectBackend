@@ -2,6 +2,7 @@ package com.revature.reimbursementapp.runners;
 
 import com.revature.reimbursementapp.daos.AccountDAO;
 import com.revature.reimbursementapp.daos.RoleDAO;
+import com.revature.reimbursementapp.dtos.LoginRequestDTO;
 import com.revature.reimbursementapp.enums.RoleType;
 import com.revature.reimbursementapp.models.Account;
 import com.revature.reimbursementapp.models.Role;
@@ -40,20 +41,18 @@ public class DBInitRunner implements CommandLineRunner {
                 Role newRole = new Role(rt);
                 roleDAO.saveAndFlush(newRole);
             }
+            rt.setRoleObject(roleDAO.findRoleByRoleType(rt));
         }
 
-        Role adminRole = roleDAO.findRoleByRoleType(RoleType.ADMIN);
-        List<Account> accountList = accountDAO.findAllByRole(adminRole);
+        List<Account> accountList = accountDAO.findAllByRole(RoleType.ADMIN.getRoleObject());
         if (accountList.isEmpty()) {
-            log.warn("Adding default admin account (root). The password should be changed in production!");
+            log.warn("Adding default admin account (admin). The password should be changed in production!");
         }
 
-        Role role = roleDAO.findRoleByRoleType(RoleType.ADMIN);
-        Account newAccount = new Account(role, "admin", "Admin", "McAdmin", passwordEncoder.encode("password"));
+        Account newAccount = new Account(RoleType.ADMIN.getRoleObject(), "admin", "Admin", "McAdmin", passwordEncoder.encode("password"));
         accountDAO.save(newAccount);
 
-        Account account = accountDAO.findByUsername(newAccount.getUsername());
-        String s = jwtService.generateJwtToken(account);
+        String s = jwtService.generateJwtToken(new LoginRequestDTO("admin","password"));
         System.out.println(s);
 
         String jwt = jwtService.parseJwtToken(s);
