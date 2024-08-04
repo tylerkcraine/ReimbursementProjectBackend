@@ -1,6 +1,6 @@
-package com.revature.reimbursementapp.Model;
+package com.revature.reimbursementapp.models;
 
-import com.revature.reimbursementapp.Enum.Status;
+import com.revature.reimbursementapp.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;

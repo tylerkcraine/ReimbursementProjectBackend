@@ -1,4 +1,4 @@
-package com.revature.reimbursementapp.Enum;
+package com.revature.reimbursementapp.enums;
 
 public enum RoleType {
     ADMIN,

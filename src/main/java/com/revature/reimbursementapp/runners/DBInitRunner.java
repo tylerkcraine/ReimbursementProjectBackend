@@ -1,11 +1,11 @@
-package com.revature.reimbursementapp.Runner;
+package com.revature.reimbursementapp.runners;
 
-import com.revature.reimbursementapp.DAO.AccountDAO;
-import com.revature.reimbursementapp.DAO.RoleDAO;
-import com.revature.reimbursementapp.Enum.RoleType;
-import com.revature.reimbursementapp.Model.Account;
-import com.revature.reimbursementapp.Model.Role;
-import com.revature.reimbursementapp.Service.JwtService;
+import com.revature.reimbursementapp.daos.AccountDAO;
+import com.revature.reimbursementapp.daos.RoleDAO;
+import com.revature.reimbursementapp.enums.RoleType;
+import com.revature.reimbursementapp.models.Account;
+import com.revature.reimbursementapp.models.Role;
+import com.revature.reimbursementapp.services.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

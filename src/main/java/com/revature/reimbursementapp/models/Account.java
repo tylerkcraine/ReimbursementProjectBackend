@@ -1,4 +1,4 @@
-package com.revature.reimbursementapp.Model;
+package com.revature.reimbursementapp.models;
 
 import jakarta.persistence.*;
 

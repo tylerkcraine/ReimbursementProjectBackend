@@ -1,7 +1,7 @@
-package com.revature.reimbursementapp.DAO;
+package com.revature.reimbursementapp.daos;
 
-import com.revature.reimbursementapp.Enum.RoleType;
-import com.revature.reimbursementapp.Model.Role;
+import com.revature.reimbursementapp.enums.RoleType;
+import com.revature.reimbursementapp.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

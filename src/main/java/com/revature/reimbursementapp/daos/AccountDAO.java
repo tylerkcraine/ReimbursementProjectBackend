@@ -1,7 +1,7 @@
-package com.revature.reimbursementapp.DAO;
+package com.revature.reimbursementapp.daos;
 
-import com.revature.reimbursementapp.Model.Account;
-import com.revature.reimbursementapp.Model.Role;
+import com.revature.reimbursementapp.models.Account;
+import com.revature.reimbursementapp.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

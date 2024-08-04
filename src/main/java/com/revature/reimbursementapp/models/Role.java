@@ -1,7 +1,7 @@
-package com.revature.reimbursementapp.Model;
+package com.revature.reimbursementapp.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.revature.reimbursementapp.Enum.RoleType;
+import com.revature.reimbursementapp.enums.RoleType;
 import jakarta.persistence.*;
 
 import java.util.List;

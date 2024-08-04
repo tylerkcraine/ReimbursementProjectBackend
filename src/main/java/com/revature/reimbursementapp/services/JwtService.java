@@ -1,17 +1,13 @@
-package com.revature.reimbursementapp.Service;
+package com.revature.reimbursementapp.services;
 
-import com.revature.reimbursementapp.Model.Account;
-import io.jsonwebtoken.Claims;
+import com.revature.reimbursementapp.models.Account;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
 import java.util.Date;
 
 @Service
@@ -45,7 +41,8 @@ public class JwtService {
     }
 
     public String parseJwtToken(String token) {
-        String s = Jwts.parser().verifyWith(this.secretKey).build().parse(token).toString();
+        Jwt<?,?> jwt = Jwts.parser().verifyWith(this.secretKey).build().parse(token);
+        String s = jwt.toString();
         return s;
     }
 }
