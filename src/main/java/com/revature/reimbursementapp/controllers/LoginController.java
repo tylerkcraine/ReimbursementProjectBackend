@@ -1,6 +1,7 @@
 package com.revature.reimbursementapp.controllers;
 
 import com.revature.reimbursementapp.dtos.LoginRequestDTO;
+import com.revature.reimbursementapp.exceptions.UnauthorizedException;
 import com.revature.reimbursementapp.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
