@@ -1,4 +1,4 @@
-package com.revature.reimbursementapp.dtos;
+package com.revature.reimbursementapp.models.dtos;
 
 public class LoginRequestDTO {
     private String username;

@@ -7,8 +7,7 @@ import com.revature.reimbursementapp.models.Role;
 public enum RoleType {
     ADMIN,
     MANAGER,
-    USER,
-    MAINTAINER;
+    USER;
 
     private Role role;
 

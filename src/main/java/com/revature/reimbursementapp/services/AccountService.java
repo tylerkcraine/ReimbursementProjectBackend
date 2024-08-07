@@ -1,13 +1,15 @@
 package com.revature.reimbursementapp.services;
 
 import com.revature.reimbursementapp.daos.AccountDAO;
-import com.revature.reimbursementapp.dtos.RegistrationDTO;
+import com.revature.reimbursementapp.models.dtos.RegistrationDTO;
 import com.revature.reimbursementapp.enums.RoleType;
 import com.revature.reimbursementapp.exceptions.AccountExistsException;
 import com.revature.reimbursementapp.models.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AccountService {
@@ -25,7 +27,7 @@ public class AccountService {
         return accountDAO.findByUsername(username);
     }
 
-    public Account saveAccount(RegistrationDTO registrationRequest) throws AccountExistsException {
+    public void saveAccount(RegistrationDTO registrationRequest) throws AccountExistsException {
         if (accountDAO.existsByUsername(registrationRequest.getUsername())) {
             throw new AccountExistsException();
         } else {
@@ -35,7 +37,10 @@ public class AccountService {
                     registrationRequest.getLastName(),
                     hashedPass);
             accountDAO.save(newAccount);
-            return accountDAO.findByUsername(registrationRequest.getUsername());
         }
+    }
+
+    public List<Account> getAllAccounts() {
+        return accountDAO.findAll();
     }
 }

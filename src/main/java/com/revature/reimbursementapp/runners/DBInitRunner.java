@@ -2,7 +2,6 @@ package com.revature.reimbursementapp.runners;
 
 import com.revature.reimbursementapp.daos.AccountDAO;
 import com.revature.reimbursementapp.daos.RoleDAO;
-import com.revature.reimbursementapp.dtos.LoginRequestDTO;
 import com.revature.reimbursementapp.enums.RoleType;
 import com.revature.reimbursementapp.models.Account;
 import com.revature.reimbursementapp.models.Role;
@@ -51,11 +50,5 @@ public class DBInitRunner implements CommandLineRunner {
 
         Account newAccount = new Account(RoleType.ADMIN.getRoleObject(), "admin", "Admin", "McAdmin", passwordEncoder.encode("password"));
         accountDAO.save(newAccount);
-
-        String s = jwtService.generateJwtToken(new LoginRequestDTO("admin","password"));
-        System.out.println(s);
-
-        String jwt = jwtService.parseJwtToken(s);
-        System.out.println(jwt);
     }
 }

@@ -1,7 +1,8 @@
 package com.revature.reimbursementapp.services;
 
-import com.revature.reimbursementapp.dtos.JwtDTO;
-import com.revature.reimbursementapp.dtos.LoginRequestDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.reimbursementapp.models.dtos.JwtDTO;
+import com.revature.reimbursementapp.models.dtos.LoginRequestDTO;
 import com.revature.reimbursementapp.models.Account;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 @Service
 public class JwtService {
@@ -27,11 +29,14 @@ public class JwtService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    public JwtService(SecretKey secretKey, AccountService accountService, PasswordEncoder passwordEncoder) {
+    public JwtService(SecretKey secretKey, AccountService accountService, PasswordEncoder passwordEncoder, ObjectMapper objectMapper) {
         this.secretKey = secretKey;
         this.accountService = accountService;
         this.passwordEncoder = passwordEncoder;
+        this.objectMapper = objectMapper;
     }
 
     public String generateJwtToken(LoginRequestDTO loginRequest) {
@@ -54,12 +59,13 @@ public class JwtService {
         }
     }
 
-    public String parseJwtToken(String token) {
+    public JwtDTO parseJwtToken(String bearer) {
+        if (!bearer.startsWith("Bearer ")) { throw new JwtException("invalid jwt header");}
+        String token = bearer.split(" ")[1];
         JwtParser jwt = Jwts.parser().verifyWith(this.secretKey).build();
         Jws<Claims> claims = jwt.parseSignedClaims(token);
         Claims c = claims.getPayload();
-        JwtDTO jwtDTO = c.get("JwtDTO", JwtDTO.class);
-        System.out.println(jwtDTO);
-        return "";
+        LinkedHashMap<?,?> jwtDTO = (LinkedHashMap<?,?>) c.get("JwtDTO", Object.class);
+        return objectMapper.convertValue(jwtDTO, JwtDTO.class);
     }
 }

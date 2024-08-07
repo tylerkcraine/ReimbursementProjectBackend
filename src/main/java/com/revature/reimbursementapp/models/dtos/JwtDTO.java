@@ -1,17 +1,18 @@
-package com.revature.reimbursementapp.dtos;
+package com.revature.reimbursementapp.models.dtos;
 
+import com.revature.reimbursementapp.enums.RoleType;
 import com.revature.reimbursementapp.models.Account;
 import com.revature.reimbursementapp.models.Role;
 
 public class JwtDTO {
     private Integer accountId;
     private String username;
-    private Role role;
+    private RoleType roleType;
 
-    public JwtDTO(Integer accountId, String username, Role role) {
+    public JwtDTO(Integer accountId, String username, RoleType roleType) {
         this.accountId = accountId;
         this.username = username;
-        this.role = role;
+        this.roleType = roleType;
     }
 
     public JwtDTO() {
@@ -19,7 +20,7 @@ public class JwtDTO {
 
     public JwtDTO(Account account) {
         this.accountId = account.getAccountId();
-        this.role = account.getRole();
+        this.roleType = account.getRole().getRoleType();
         this.username = account.getUsername();
     }
     public Integer getAccountId() {
@@ -38,11 +39,11 @@ public class JwtDTO {
         this.username = username;
     }
 
-    public Role getRole() {
-        return role;
+    public RoleType getRoleType() {
+        return roleType;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(RoleType roleType) {
+        this.roleType = roleType;
     }
 }
