@@ -1,6 +1,7 @@
 package com.revature.reimbursementapp.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.reimbursementapp.exceptions.AccountNotFoundException;
 import com.revature.reimbursementapp.models.dtos.JwtDTO;
 import com.revature.reimbursementapp.models.dtos.LoginRequestDTO;
 import com.revature.reimbursementapp.models.Account;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 @Service
 public class JwtService {
@@ -42,7 +44,8 @@ public class JwtService {
     public String generateJwtToken(LoginRequestDTO loginRequest) {
         Date issuedDate = new Date();
         Date expirationDate = new Date(issuedDate.getTime() + expiration);
-        Account account = accountService.getAccountByUsername(loginRequest.getUsername());
+        Optional<Account> possibleAccount = accountService.getAccountByUsername(loginRequest.getUsername());
+        Account account = possibleAccount.orElseThrow(AccountNotFoundException::new);
         JwtDTO jwtDTO = new JwtDTO(account);
 
         if (passwordEncoder.matches(loginRequest.getRawPassword(), account.getPassword())) {
@@ -62,10 +65,14 @@ public class JwtService {
     public JwtDTO parseJwtToken(String bearer) {
         if (!bearer.startsWith("Bearer ")) { throw new JwtException("invalid jwt header");}
         String token = bearer.split(" ")[1];
+
         JwtParser jwt = Jwts.parser().verifyWith(this.secretKey).build();
         Jws<Claims> claims = jwt.parseSignedClaims(token);
         Claims c = claims.getPayload();
         LinkedHashMap<?,?> jwtDTO = (LinkedHashMap<?,?>) c.get("JwtDTO", Object.class);
-        return objectMapper.convertValue(jwtDTO, JwtDTO.class);
+        JwtDTO returnJwt = objectMapper.convertValue(jwtDTO, JwtDTO.class);
+        Optional<Account> possibleAccount = accountService.getAccountByUsername(returnJwt.getUsername());
+        possibleAccount.orElseThrow(AccountNotFoundException::new);
+        return returnJwt;
     }
 }

@@ -21,12 +21,6 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<String> postLogin(@RequestBody LoginRequestDTO loginRequest) {
-        String token = jwtService.generateJwtToken(loginRequest);
-        
-        if (token.isBlank()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else {
-            return ResponseEntity.ok(token);
-        }
+        return ResponseEntity.ok(jwtService.generateJwtToken(loginRequest));
     }
 }

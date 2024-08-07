@@ -23,7 +23,7 @@ public class Account {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.ALL)
     private List<Reimbursement> reimbursementList;
 
     public Account(Integer accountId, String firstName, String lastName, String username, Role role, List<Reimbursement> reimbursementList, String password) {
@@ -73,5 +73,29 @@ public class Account {
 
     public List<Reimbursement> getReimbursementList() {
         return reimbursementList;
+    }
+
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
