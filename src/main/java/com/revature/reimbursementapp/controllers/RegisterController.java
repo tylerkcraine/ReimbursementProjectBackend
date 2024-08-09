@@ -25,7 +25,7 @@ public class RegisterController {
     }
 
     @PostMapping
-    public ResponseEntity<String> RegisterAccount(@RequestBody RegistrationDTO registrationRequest) {
+    public ResponseEntity<String> registerAccount(@RequestBody RegistrationDTO registrationRequest) {
         try {
             this.accountService.saveAccount(registrationRequest);
         } catch (AccountExistsException e) {

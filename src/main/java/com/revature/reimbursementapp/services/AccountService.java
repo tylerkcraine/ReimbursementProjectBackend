@@ -28,14 +28,20 @@ public class AccountService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    private void validateUser() {
+
+    }
+
     public List<Account> getAllAccounts() {
         return accountDAO.findAll();
     }
 
-    public Optional<Account> getAccountById(int id) { return accountDAO.findById(id); }
+    public Account getAccountById(int id) {
+        return accountDAO.findById(id).orElseThrow(AccountNotFoundException::new);
+    }
 
-    public Optional<Account> getAccountByUsername(String username) {
-        return accountDAO.findByUsername(username);
+    public Account getAccountByUsername(String username) {
+        return accountDAO.findByUsername(username).orElseThrow(AccountNotFoundException::new);
     }
 
     public void saveAccount(RegistrationDTO registrationRequest) throws AccountExistsException {
@@ -55,31 +61,58 @@ public class AccountService {
     public void updateAccount(AccountChangeDTO accountChangeDTO, JwtDTO requestingUser) {
         Optional<Account> accountOptional = accountDAO.findById(requestingUser.getAccountId());
         Account requestingAccount = accountOptional.orElseThrow(AccountNotFoundException::new);
-        if (!passwordEncoder.matches(accountChangeDTO.getRawPassword(),requestingAccount.getPassword()) && requestingUser.getRoleType() != RoleType.ADMIN) {
-            throw new PasswordIncorrectException();
+
+        if (requestingAccount.getRole().getRoleType() == RoleType.USER) {
+            if (accountChangeDTO.getRoleType() != RoleType.USER) {
+                throw new UnauthorizedException("Users can't change their own role to anything but USER");
+            }
+            if (!accountChangeDTO.getAccountId().equals(requestingAccount.getAccountId())) {
+                throw new UnauthorizedException("Users can't change anyone's account other than their own");
+            }
         }
 
+        //unboxing account
+        Optional<Account> changeAccount = accountDAO.findById(accountChangeDTO.getAccountId());
+        Account account = changeAccount.orElseThrow(AccountNotFoundException::new);
+
         // when we only have one admin account, don't allow its role to change from admin
-        if (requestingAccount.getRole().getRoleType() == RoleType.ADMIN &&
-                accountDAO.countByRole(RoleType.ADMIN.getRoleObject()) == 1 &&
-                accountChangeDTO.getRoleType() != RoleType.ADMIN) {
+        if (accountDAO.countByRole(RoleType.ADMIN.getRoleObject()) == 1 &&
+                accountChangeDTO.getRoleType() != RoleType.ADMIN &&
+                account.getRole().getRoleType() == RoleType.ADMIN) {
             throw new SingleAdminException();
         }
 
-        Optional<Account> changeAccount = accountDAO.findById(accountChangeDTO.getAccountId());
-        Account account = changeAccount.orElseThrow(AccountNotFoundException::new);
-        account.setUsername(accountChangeDTO.getUsername());
+        //setting new fields
+        //checking to see if a new username is provided and if it is taken already by another user
+        if (accountChangeDTO.getUsername() != null && !account.getUsername().equals(accountChangeDTO.getUsername())) {
+            if (accountDAO.existsByUsername(accountChangeDTO.getUsername()))
+                throw new AccountExistsException();
+            account.setUsername(accountChangeDTO.getUsername());
+        }
         account.setFirstName(accountChangeDTO.getFirstName());
         account.setLastName(accountChangeDTO.getLastName());
-        if (accountChangeDTO.getRawPassword() == null) {
-            
+        if (accountChangeDTO.getRawPassword() != null) {
+            String encodedPass = passwordEncoder.encode(accountChangeDTO.getRawPassword());
+            account.setPassword(encodedPass);
         }
-        String encodedPass = passwordEncoder.encode(accountChangeDTO.getRawPassword());
-        account.setPassword(encodedPass);
         account.setRole(accountChangeDTO.getRoleType().getRoleObject());
         accountDAO.flush();
     }
 
-    public void removeAccount(AccountChangeDTO accountChangeDTO, JwtDTO requestingUser) {
+    public void removeAccount(Integer account_id, JwtDTO requestingUser) {
+        if (requestingUser.getRoleType() == RoleType.USER && !requestingUser.getAccountId().equals(account_id)) {
+            throw new UnauthorizedException("Users can only delete their own account.");
+        }
+
+        Optional<Account> possibleAccount = accountDAO.findById(account_id);
+        Account account = possibleAccount.orElseThrow(AccountNotFoundException::new);
+
+        //checking to see if we are trying to delete the last admin account
+        if (account.getRole().getRoleType() == RoleType.ADMIN &&
+                accountDAO.countByRole(RoleType.ADMIN.getRoleObject())==1) {
+            throw new SingleAdminException();
+        }
+
+        accountDAO.delete(account);
     }
 }

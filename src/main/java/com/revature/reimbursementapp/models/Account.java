@@ -3,6 +3,7 @@ package com.revature.reimbursementapp.models;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Account {
@@ -22,6 +23,24 @@ public class Account {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return Objects.equals(accountId, account.accountId) &&
+                Objects.equals(firstName, account.firstName) &&
+                Objects.equals(lastName, account.lastName) &&
+                Objects.equals(password, account.password) &&
+                Objects.equals(username, account.username) &&
+                Objects.equals(role, account.role);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(accountId, firstName, lastName, password, username, role);
+    }
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.ALL)
     private List<Reimbursement> reimbursementList;

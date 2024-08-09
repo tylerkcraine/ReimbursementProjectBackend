@@ -2,6 +2,7 @@ package com.revature.reimbursementapp.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.reimbursementapp.exceptions.AccountNotFoundException;
+import com.revature.reimbursementapp.exceptions.UnauthorizedException;
 import com.revature.reimbursementapp.models.dtos.JwtDTO;
 import com.revature.reimbursementapp.models.dtos.LoginRequestDTO;
 import com.revature.reimbursementapp.models.Account;
@@ -44,8 +45,7 @@ public class JwtService {
     public String generateJwtToken(LoginRequestDTO loginRequest) {
         Date issuedDate = new Date();
         Date expirationDate = new Date(issuedDate.getTime() + expiration);
-        Optional<Account> possibleAccount = accountService.getAccountByUsername(loginRequest.getUsername());
-        Account account = possibleAccount.orElseThrow(AccountNotFoundException::new);
+        Account account = accountService.getAccountByUsername(loginRequest.getUsername());
         JwtDTO jwtDTO = new JwtDTO(account);
 
         if (passwordEncoder.matches(loginRequest.getRawPassword(), account.getPassword())) {
@@ -58,7 +58,7 @@ public class JwtService {
                     .expiration(expirationDate)
                     .compact();
         } else {
-            return "";
+            throw new UnauthorizedException();
         }
     }
 
@@ -71,8 +71,15 @@ public class JwtService {
         Claims c = claims.getPayload();
         LinkedHashMap<?,?> jwtDTO = (LinkedHashMap<?,?>) c.get("JwtDTO", Object.class);
         JwtDTO returnJwt = objectMapper.convertValue(jwtDTO, JwtDTO.class);
-        Optional<Account> possibleAccount = accountService.getAccountByUsername(returnJwt.getUsername());
-        possibleAccount.orElseThrow(AccountNotFoundException::new);
+        try {
+            Account account = accountService.getAccountById(returnJwt.getAccountId());
+            if (account.getRole().getRoleType() != returnJwt.getRoleType() ||
+                !account.getUsername().equals(returnJwt.getUsername())) {
+                throw new JwtException("Account changed generate a new JWT");
+            }
+        } catch (AccountNotFoundException e) {
+            throw new JwtException("Account deleted");
+        }
         return returnJwt;
     }
 }

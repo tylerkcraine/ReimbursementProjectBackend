@@ -1,6 +1,6 @@
 package com.revature.reimbursementapp.exceptions;
 
-public class AccountExistsException extends Exception{
+public class AccountExistsException extends RuntimeException{
     public AccountExistsException() {
     }
 
