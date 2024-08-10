@@ -3,7 +3,6 @@ package com.revature.reimbursementapp.services;
 import com.revature.reimbursementapp.daos.AccountDAO;
 import com.revature.reimbursementapp.daos.ReimbursementDAO;
 import com.revature.reimbursementapp.enums.RoleType;
-import com.revature.reimbursementapp.enums.Status;
 import com.revature.reimbursementapp.exceptions.AccountNotFoundException;
 import com.revature.reimbursementapp.exceptions.ReimbursementNotFound;
 import com.revature.reimbursementapp.exceptions.UnauthorizedException;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -69,5 +69,33 @@ public class ReimbursementService {
             reimbursement.setStatus(reimbursementDTO.getStatus());
         }
         reimbursementDAO.flush();
+    }
+
+    public void deleteReimbursement(String id, JwtDTO jwt) {
+        Integer numId = Integer.parseInt(id);
+        if (!jwt.getAccountId().equals(numId) && jwt.getRoleType() == RoleType.USER) {
+            return;
+        }
+
+        Optional<Reimbursement> r = reimbursementDAO.findById(numId);
+        if (r.isEmpty())
+            return;
+        reimbursementDAO.delete(r.get());
+    }
+
+    public List<Reimbursement> getReimbursements(JwtDTO jwt) {
+        if (jwt.getRoleType() == RoleType.USER) {
+            return reimbursementDAO.findAllByAccount_AccountId(jwt.getAccountId());
+        } else {
+            return reimbursementDAO.findAll();
+        }
+    }
+
+    public Reimbursement getReimbursement(int id, JwtDTO jwt) {
+        if (jwt.getRoleType() == RoleType.USER && !jwt.getAccountId().equals(id)){
+            throw new UnauthorizedException();
+        }
+        Optional<Reimbursement> reimbursement = reimbursementDAO.findById(id);
+        return reimbursement.orElseThrow(ReimbursementNotFound::new);
     }
 }

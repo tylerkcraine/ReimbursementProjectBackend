@@ -28,10 +28,6 @@ public class AccountService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    private void validateUser() {
-
-    }
-
     public List<Account> getAllAccounts() {
         return accountDAO.findAll();
     }
@@ -91,6 +87,7 @@ public class AccountService {
         }
         account.setFirstName(accountChangeDTO.getFirstName());
         account.setLastName(accountChangeDTO.getLastName());
+        //re-encode a new password
         if (accountChangeDTO.getRawPassword() != null) {
             String encodedPass = passwordEncoder.encode(accountChangeDTO.getRawPassword());
             account.setPassword(encodedPass);
@@ -101,7 +98,7 @@ public class AccountService {
 
     public void removeAccount(Integer account_id, JwtDTO requestingUser) {
         if (requestingUser.getRoleType() == RoleType.USER && !requestingUser.getAccountId().equals(account_id)) {
-            throw new UnauthorizedException("Users can only delete their own account.");
+            return;
         }
 
         Optional<Account> possibleAccount = accountDAO.findById(account_id);
@@ -110,7 +107,7 @@ public class AccountService {
         //checking to see if we are trying to delete the last admin account
         if (account.getRole().getRoleType() == RoleType.ADMIN &&
                 accountDAO.countByRole(RoleType.ADMIN.getRoleObject())==1) {
-            throw new SingleAdminException();
+            return;
         }
 
         accountDAO.delete(account);

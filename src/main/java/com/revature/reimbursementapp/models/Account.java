@@ -1,5 +1,6 @@
 package com.revature.reimbursementapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class Account {
 
     private String lastName;
 
+    @JsonIgnore
     private String password;
 
     @Column(unique = true)
@@ -42,7 +44,8 @@ public class Account {
         return Objects.hash(accountId, firstName, lastName, password, username, role);
     }
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", orphanRemoval = true)
+    @JsonIgnore
     private List<Reimbursement> reimbursementList;
 
     public Account(Integer accountId, String firstName, String lastName, String username, Role role, List<Reimbursement> reimbursementList, String password) {

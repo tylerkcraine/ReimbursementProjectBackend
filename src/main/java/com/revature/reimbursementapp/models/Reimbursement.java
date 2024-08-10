@@ -1,5 +1,6 @@
 package com.revature.reimbursementapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.revature.reimbursementapp.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
