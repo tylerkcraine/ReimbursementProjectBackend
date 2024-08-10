@@ -5,6 +5,7 @@ import com.revature.reimbursementapp.exceptions.AccountNotFoundException;
 import com.revature.reimbursementapp.exceptions.SingleAdminException;
 import com.revature.reimbursementapp.exceptions.UnauthorizedException;
 import io.jsonwebtoken.JwtException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,5 +47,10 @@ public class GlobalAdviceHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({AccountExistsException.class})
     public ResponseEntity<String> handleAccountExistsException(AccountExistsException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("That user name is already taken");
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
