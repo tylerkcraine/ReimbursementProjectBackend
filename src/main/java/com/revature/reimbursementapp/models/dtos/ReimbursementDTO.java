@@ -4,20 +4,29 @@ import com.revature.reimbursementapp.enums.Status;
 
 import java.math.BigDecimal;
 
-public class NewReimbursementDTO {
+public class ReimbursementDTO {
+    private Integer reimbursementId;
     private String description;
     private BigDecimal amount;
     private Status status;
     private Integer accountId;
 
-    public NewReimbursementDTO(String description, BigDecimal amount, Status status, Integer accountId) {
+    public ReimbursementDTO(String description, BigDecimal amount, Status status, Integer accountId) {
         this.description = description;
         this.amount = amount;
         this.status = status;
         this.accountId = accountId;
     }
 
-    public NewReimbursementDTO() {
+    public ReimbursementDTO(Integer reimbursementId, String description, BigDecimal amount, Status status, Integer accountId) {
+        this.reimbursementId = reimbursementId;
+        this.description = description;
+        this.amount = amount;
+        this.status = status;
+        this.accountId = accountId;
+    }
+
+    public ReimbursementDTO() {
     }
 
     public String getDescription() {
@@ -50,5 +59,13 @@ public class NewReimbursementDTO {
 
     public void setAccountId(Integer accountId) {
         this.accountId = accountId;
+    }
+
+    public Integer getReimbursementId() {
+        return reimbursementId;
+    }
+
+    public void setReimbursementId(Integer reimbursementId) {
+        this.reimbursementId = reimbursementId;
     }
 }
