@@ -78,4 +78,12 @@ public class Reimbursement {
     public void setAccount(Account account) {
         this.account = account;
     }
+
+    public Integer getReimbursementId() {
+        return reimbursementId;
+    }
+
+    public void setReimbursementId(Integer reimbursementId) {
+        this.reimbursementId = reimbursementId;
+    }
 }

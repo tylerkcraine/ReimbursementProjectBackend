@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins="http://localhost:5173", allowCredentials = "true")
 public class ReimbursementController {
 
     private final JwtService jwtService;
@@ -41,6 +41,7 @@ public class ReimbursementController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @CrossOrigin(origins="http://localhost:5173", allowCredentials = "true")
     @DeleteMapping("/reimbursement/{id}")
     public ResponseEntity<String> deleteReimbursement(@PathVariable String id, @RequestHeader(HttpHeaders.AUTHORIZATION) String bearer) {
         JwtDTO jwt = jwtService.parseJwtToken(bearer);

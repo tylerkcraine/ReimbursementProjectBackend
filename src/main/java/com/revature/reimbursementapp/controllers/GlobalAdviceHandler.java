@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.security.auth.login.AccountExpiredException;
 
 @ControllerAdvice
-@CrossOrigin
+@CrossOrigin(origins="http://localhost:5173", allowCredentials = "true")
 public class GlobalAdviceHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({JwtException.class})
     public ResponseEntity<String> handleJwtException(JwtException ex, WebRequest request) {

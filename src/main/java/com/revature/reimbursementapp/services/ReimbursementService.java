@@ -50,12 +50,12 @@ public class ReimbursementService {
     }
 
     public void updateReimbursement(ReimbursementDTO reimbursementDTO, JwtDTO jwt) {
-        if (jwt.getRoleType() == RoleType.USER && reimbursementDTO.getStatus() != null) {
-            throw new UnauthorizedException("Users can't change the status of reimbursements");
-        }
 
         Optional<Reimbursement> possibleReimbursement = reimbursementDAO.findById(reimbursementDTO.getReimbursementId());
         Reimbursement reimbursement = possibleReimbursement.orElseThrow(ReimbursementNotFound::new);
+        if (jwt.getRoleType() == RoleType.USER && reimbursementDTO.getStatus() != reimbursement.getStatus()) {
+            throw new UnauthorizedException("Users can't change the status of reimbursements");
+        }
 
         if (reimbursementDTO.getAccountId() != null) {
             Optional<Account> possibleAccount = accountDAO.findById(reimbursementDTO.getAccountId());
@@ -73,7 +73,11 @@ public class ReimbursementService {
 
     public void deleteReimbursement(String id, JwtDTO jwt) {
         Integer numId = Integer.parseInt(id);
-        if (!jwt.getAccountId().equals(numId) && jwt.getRoleType() == RoleType.USER) {
+        Optional<Reimbursement> reimbursement = reimbursementDAO.findById(numId);
+        if (reimbursement.isEmpty()) {
+            return;
+        }
+        if (!jwt.getAccountId().equals(reimbursement.get().getAccount().getAccountId()) && jwt.getRoleType() == RoleType.USER) {
             return;
         }
 

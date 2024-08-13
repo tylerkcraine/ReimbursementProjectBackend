@@ -10,6 +10,7 @@ import com.revature.reimbursementapp.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins="http://localhost:5173", allowCredentials = "true")
 public class AccountController {
 
     private final AccountService accountService;
@@ -29,7 +30,7 @@ public class AccountController {
         this.jwtService = jwtService;
     }
 
-    @GetMapping("/accounts")
+    @GetMapping(value = "/accounts")
     public ResponseEntity<List<ReturnAccountDTO>> getAllAccounts(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearer) {
         JwtDTO requestingUser = jwtService.parseJwtToken(bearer);
         //users are not allowed to query for all accounts
@@ -65,6 +66,7 @@ public class AccountController {
         return ResponseEntity.ok().body("");
     }
 
+    @CrossOrigin(origins="http://localhost:5173", allowCredentials = "true")
     @GetMapping("/me")
     public ResponseEntity<ReturnAccountDTO> getMe(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearer) {
         JwtDTO requestingUser = jwtService.parseJwtToken(bearer);
